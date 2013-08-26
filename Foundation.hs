@@ -137,7 +137,7 @@ instance YesodAuth App where
         case x of
             Just (Entity uid _) -> return $ Just uid
             Nothing -> do
-                fmap Just $ insert $ User (credsIdent creds) Nothing
+                fmap Just $ insert $ User (credsIdent creds) 
 
     authPlugins _ = [ GAuth.authGoogleEmail                   -- for Google
                     , OIdAuth.authOpenId OIdAuth.OPLocal []]    -- for Yahoo
