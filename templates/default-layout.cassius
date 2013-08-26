@@ -1,0 +1,13 @@
+@loginboxwidth: 25em   /* 400px, but safe in more browsers */
+@loginbackgroundcolor: #FFFFFF
+
+
+#loginbox
+    background-color: #{loginbackgroundcolor}
+    align: center
+    margin-top: 6.25em
+    margin-bottom: auto
+    margin-left: auto
+    margin-right: auto
+    height: 100%
+    max-width: #{loginboxwidth}

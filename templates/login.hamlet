@@ -1,0 +1,12 @@
+<div #loginbox>
+    <h4> &nbsp;
+    <h2 align=center> Login using:
+    <h4> &nbsp;
+    <form  align=center method="get" action="@{AuthR GAuth.forwardUrl}" .button .google>
+        <input type="hidden" name="openid_identifier" value="https://www.google.com/accounts/o8/id">
+        <input type="image" src="@{StaticR google_gif}" value="Login via Google">
+    <h4> &nbsp;
+    <form align=center method="get" action="@{AuthR OIdAuth.forwardUrl}" .button .yahoo>
+        <input type="hidden" name="openid_identifier" value="http://me.yahoo.com">
+        <input type="image" src="@{StaticR yahoo_gif}" value="Login via Yahoo!">
+    <h4> &nbsp;

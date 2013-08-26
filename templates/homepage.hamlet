@@ -1,4 +1,9 @@
 <h1>_{MsgHello}
+<div>
+  $maybe _ <- mAuth
+      <a href=@{AuthR LogoutR}>Logout
+  $nothing
+      <a href=@{AuthR LoginR}>Login
 
 <ol>
   <li>Now that you have a working project you should use the #

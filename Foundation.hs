@@ -144,6 +144,15 @@ instance YesodAuth App where
 
     authHttpManager = httpManager
 
+    loginHandler = lift $ defaultLayout $ do
+         [whamlet|\
+<div style="width:800px;margin:0 auto" > ^{login}
+|]
+
+login :: Widget
+login = toWidget $(hamletFile "templates/login.hamlet")
+    
+
 -- This instance is required to use forms. You can modify renderMessage to
 -- achieve customized and internationalized form validation messages.
 instance RenderMessage App FormMessage where
