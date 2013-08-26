@@ -4,15 +4,14 @@ import Prelude
 import Yesod
 import Yesod.Static
 import Yesod.Auth
-import Yesod.Auth.BrowserId
-import Yesod.Auth.GoogleEmail
+import qualified Yesod.Auth.GoogleEmail as GAuth
+import qualified Yesod.Auth.OpenId as OIdAuth
 import Yesod.Default.Config
 import Yesod.Default.Util (addStaticContentExternal)
 import Network.HTTP.Conduit (Manager)
 import qualified Settings
 import Settings.Development (development)
 import qualified Database.Persist
-import Database.Persist.Sql (SqlPersistT)
 import Settings.StaticFiles
 import Database.Persist.MongoDB hiding (master)
 import Settings (widgetFile, Extra (..))
@@ -87,7 +86,7 @@ instance Yesod App where
                 , css_bootstrap_css
                 ])
             $(widgetFile "default-layout")
-        hamletToRepHtml $(hamletFile "templates/default-layout-wrapper.hamlet")
+        giveUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")
 
     -- This is done to provide an optimization for serving static files from
     -- a separate domain. Please see the staticRoot setting in Settings.hs
@@ -129,7 +128,7 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = HomeR
+    loginDest _ = ListsR
     -- Where to send a user after logout
     logoutDest _ = HomeR
 
@@ -140,8 +139,8 @@ instance YesodAuth App where
             Nothing -> do
                 fmap Just $ insert $ User (credsIdent creds) Nothing
 
-    -- You can add other plugins like BrowserID, email or OAuth here
-    authPlugins _ = [authBrowserId def, authGoogleEmail]
+    authPlugins _ = [ GAuth.authGoogleEmail                   -- for Google
+                    , OIdAuth.authOpenId OIdAuth.OPLocal []]    -- for Yahoo
 
     authHttpManager = httpManager
 
