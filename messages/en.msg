@@ -15,3 +15,4 @@ EditEntryHeader: Edit Entry Text
 
 EditItem: Edit
 DeleteItem: Delete
+CompleteItem: Complete
