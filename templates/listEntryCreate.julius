@@ -1,0 +1,9 @@
+function setInitialFocus() {
+    var createForm=document.getElementById("createListItemForm");
+    var inputBoxes=createForm.getElementsByTagName("input");
+    inputBoxes[1].focus(); 
+}
+
+onload = function() {
+   setInitialFocus();
+}

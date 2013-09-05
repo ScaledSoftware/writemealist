@@ -1,7 +1,7 @@
 <div>
     <h3> Create a list entry for list #{listName list}
     <p>
-      <form method=post enctype=#{enctype} action="@{ListEntryCreateR listId}">
+      <form #createListItemForm method=post enctype=#{enctype} action="@{ListEntryCreateR listId}">
         ^{entrywidget}
         <div>
             <input type=submit value=_{MsgCreateNewListEntryButton}>
