@@ -1,0 +1,12 @@
+function setInitialFocus() {
+    var editForm=document.getElementById("editListItemForm");
+    var inputBoxes=editForm.getElementsByTagName("input");
+    // inputBoxes[0] contains the hidden cross-site scripting protection so skip that.
+    var target=inputBoxes[1];
+    target.focus(); 
+    target.setSelectionRange(target.value.length, target.value.length);
+}
+
+onload = function() {
+   setInitialFocus();
+}
