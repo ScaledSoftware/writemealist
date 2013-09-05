@@ -1,0 +1,8 @@
+<div>
+  $if null listIdNamePairs
+    <p> _{MsgNoListsYet}
+  $else
+    $forall (listId, listName) <- listIdNamePairs
+      <div>
+        <a href=@{ListR listId}>#{listName}
+

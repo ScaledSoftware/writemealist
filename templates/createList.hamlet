@@ -1,0 +1,5 @@
+<div>
+  <form method=post enctype=#{enctype} action="@{CreateListR}">
+    ^{entrywidget}
+    <div>
+        <input type=submit value=_{MsgCreateNewListButton}>

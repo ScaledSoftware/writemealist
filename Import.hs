@@ -2,6 +2,7 @@ module Import
     ( module Import
     ) where
 
+import           Data.Time            as Import (getCurrentTime)
 import           Prelude              as Import hiding (head, init, last,
                                                  readFile, tail, writeFile)
 import           Yesod                as Import hiding (Route (..))

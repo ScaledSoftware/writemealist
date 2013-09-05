@@ -1,12 +1,23 @@
 User
     ident Text
-    password Text Maybe
     UniqueUser ident
     deriving Typeable
-Email
-    email Text
-    user UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
+
+List
+    name Text
+    createdBy UserId
+
+ListEntry
+    item Text
+    list ListId
+    createdBy UserId
+    createdAt UTCTime
+    completedBy UserId Maybe
+    completedAt UTCTime Maybe
+
+ListEditor 
+    list ListId
+    viewer UserId
+
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

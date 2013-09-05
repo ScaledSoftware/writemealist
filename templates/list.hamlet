@@ -1,0 +1,9 @@
+<div>
+   <h1> #{listName list}
+   <ul>
+     $forall (Entity listEntryId listEntry) <- listItems
+       <li> 
+          #{listEntryItem listEntry} 
+          <a href=@{ListEntryEditR listId listEntryId}>_{MsgEditItem}
+          <form method="post" action="@{ListEntryDeleteR listId listEntryId}" style=" display:inline!important;">
+            <input type="submit" value="_{MsgDeleteItem}">

@@ -1,0 +1,7 @@
+<div>
+    <h1> Edit a list entry for list #{listName list}
+    <p>
+      <form method=post enctype=#{enctype} action="@{ListEntryEditR listId listEntryId}">
+        ^{entrywidget}
+        <div>
+            <input type=submit value=_{MsgEditListEntryButton}>
