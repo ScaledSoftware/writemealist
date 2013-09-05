@@ -4,4 +4,4 @@
       <form #createListItemForm method=post enctype=#{enctype} action="@{ListEntryCreateR listId}">
         ^{entrywidget}
         <div>
-            <input type=submit value=_{MsgCreateNewListEntryButton}>
+            <input type=submit value=_{MsgCreateListEntryButton}>
