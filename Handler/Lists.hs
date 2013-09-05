@@ -2,6 +2,7 @@ module Handler.Lists where
 
 import Import
 import Yesod.Auth
+import Data.Maybe (isJust, isNothing)
 
 getListsR :: Handler Html
 getListsR = do
@@ -99,15 +100,32 @@ postListItemDeleteR listId listItemId = do
     runDB $ delete listItemId
     redirect $ ListR listId
 
+postListItemCompleteR :: ListId -> ListItemId -> Handler Html
+postListItemCompleteR listId listItemId = do
+    Entity uId _ <- requireAuth
+    currTime <- lift getCurrentTime
+
+    runDB $ do
+        listItem <- get404 listItemId
+        if isNothing (listItemCompletedAt listItem)
+           then do
+               update listItemId [ListItemCompletedBy =. (Just uId)] 
+               update listItemId [ListItemCompletedAt =. (Just currTime)] 
+           else do
+               update listItemId [ListItemCompletedBy =. Nothing] 
+               update listItemId [ListItemCompletedAt =. Nothing] 
+
+    redirect $ ListR listId
+
 
 listItemEditForm :: ListId -> Maybe Text -> Form (ListId, Text)
-listItemEditForm listId entryName = renderDivs $ (,)
+listItemEditForm listId entryName = renderTable $ (,)
     <$> pure listId
     <*> areq textField (fieldSettingsLabel MsgListItemLabel) entryName
 
 
 listCreateForm :: UserId -> Form List
-listCreateForm uId = renderDivs $ List
+listCreateForm uId = renderTable $ List
     <$> areq textField (fieldSettingsLabel MsgListNameLabel) Nothing
     <*> pure uId
 
