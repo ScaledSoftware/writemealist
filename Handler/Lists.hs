@@ -54,7 +54,7 @@ postListEntryCreateR listId = do
         _ -> do 
             list <- runDB $ get404 listId
             defaultLayout $ do
-                setTitleI MsgPleaseEnterListEntryName
+                setTitleI MsgEnterListEntryName
                 $(widgetFile "listEntryCreate")
 
 
@@ -78,8 +78,9 @@ postListEntryEditR listId listEntryId = do
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
+
             defaultLayout $ do
-                setTitleI MsgPleaseEnterListEntryName
+                setTitleI MsgEnterListEntryName
                 $(widgetFile "listEntryEdit")
 
 getListEntryEditR :: ListId -> ListEntryId -> Handler Html
@@ -87,8 +88,9 @@ getListEntryEditR listId listEntryId = do
     listEntry <- runDB $ get404 listEntryId
     (entrywidget, enctype) <- generateFormPost (listEntryEditForm listId (Just $ listEntryItem listEntry))
     list <- runDB $ get404 listId
+
     defaultLayout $ do
-        setTitleI MsgPleaseEnterListEntryName
+        setTitleI MsgEnterListEntryName
         $(widgetFile "listEntryEdit")
 
 
@@ -122,7 +124,7 @@ postCreateListR = do
                                             })
             redirect $ ListR listId
         _ -> defaultLayout $ do
-            setTitleI MsgPleaseEnterListName
+            setTitleI MsgEnterListName
             $(widgetFile "createList")
 
     
