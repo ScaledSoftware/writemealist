@@ -98,12 +98,11 @@ postListEntryDeleteR listId listEntryId = do
     redirect $ ListR listId
 
 
-
-
 listEntryEditForm :: ListId -> Maybe Text -> Form (ListId, Text)
 listEntryEditForm listId entryName = renderDivs $ (,)
     <$> pure listId
     <*> areq textField (fieldSettingsLabel MsgListEntryLabel) entryName
+
 
 listCreateForm :: UserId -> Form List
 listCreateForm uId = renderDivs $ List
