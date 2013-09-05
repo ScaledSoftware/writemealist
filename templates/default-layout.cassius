@@ -1,5 +1,7 @@
 @loginboxwidth: 25em   /* 400px, but safe in more browsers */
 @loginbackgroundcolor: #FFFFFF
+@buttontopgrad: #DDDDDD
+@buttonbotgrad: #AAAAAA
 
 
 #loginbox
@@ -11,3 +13,25 @@
     margin-right: auto
     height: 100%
     max-width: #{loginboxwidth}
+
+.curve 
+    -moz-border-radius: 5px /* Firefox */
+    -webkit-border-radius: 5px /* Safari & Chrome */
+    -khtml-border-radius: 5px /* Linux browsers */
+    border-radius: 5px /* CSS3 compatible browsers */
+
+.gradient 
+    background: -moz-linear-gradient(top, #{buttontopgrad}, #{buttonbotgrad}) /* Firefox 3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, from(#{buttontopgrad}), to(#{buttonbotgrad})) /* Safari & Chrome */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{buttontopgrad}', endColorstr='#{buttonbotgrad}') /* IE 5.5 - 7 */
+
+
+input[type=submit]
+    font-size: 10px
+    font-weight: bold
+    height: 16px
+    padding: 0px 4px 1px 4px
+    border: 0
+    position: relative
+    top: 3px
+

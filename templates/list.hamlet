@@ -5,6 +5,6 @@
        <li> 
           #{listItemName listItem} 
           <form method="get" action="@{ListItemEditR listId listItemId}" style=" display:inline!important;">
-            <input type="submit" value="_{MsgEditItem}">
+            <input .gradient .curve type="submit" value="_{MsgEditItem}" height=16>
           <form method="post" action="@{ListItemDeleteR listId listItemId}" style=" display:inline!important;">
-            <input type="submit" value="_{MsgDeleteItem}">
+            <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
