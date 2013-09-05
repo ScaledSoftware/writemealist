@@ -8,3 +8,5 @@ config/client_session_key.aes
 yesod-devel/
 cabal-dev/
 static/combined/
+.DS_store
+.*swp
