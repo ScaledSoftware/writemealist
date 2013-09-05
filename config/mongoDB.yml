@@ -2,6 +2,7 @@ Default: &defaults
   user: writemealist
   password: writemealist
   host: localhost
+  port: 27017
   database: writemealist
   connections: 10
 
