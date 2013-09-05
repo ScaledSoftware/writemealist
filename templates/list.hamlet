@@ -4,6 +4,7 @@
      $forall (Entity listEntryId listEntry) <- listItems
        <li> 
           #{listEntryItem listEntry} 
-          <a href=@{ListEntryEditR listId listEntryId}>_{MsgEditItem}
+          <form method="get" action="@{ListEntryEditR listId listEntryId}" style=" display:inline!important;">
+            <input type="submit" value="_{MsgEditItem}">
           <form method="post" action="@{ListEntryDeleteR listId listEntryId}" style=" display:inline!important;">
             <input type="submit" value="_{MsgDeleteItem}">
