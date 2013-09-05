@@ -10,8 +10,7 @@ CreateListItemButton: Add
 EditListItemButton: Save Changes
 ListAccessDenied: You do not have permission to access that list.
 
-ListItemLabel: List Entry Name:
-
+ListItemLabel: Add a list item:
 EditEntryHeader: Edit Entry Text
 
 EditItem: Edit
