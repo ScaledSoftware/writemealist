@@ -7,8 +7,8 @@ List
     name Text
     createdBy UserId
 
-ListEntry
-    item Text
+ListItem
+    name Text
     list ListId
     createdBy UserId
     createdAt UTCTime

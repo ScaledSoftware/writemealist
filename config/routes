@@ -9,6 +9,6 @@
 /list/create CreateListR POST
 /list/show/#ListId ListR GET
 
-/list/#ListId/entry/edit/#ListEntryId   ListEntryEditR GET POST
-/list/#ListId/entry/create              ListEntryCreateR GET POST
-/list/#ListId/entry/delete/#ListEntryId ListEntryDeleteR POST
+/list/#ListId/entry/edit/#ListItemId   ListItemEditR GET POST
+/list/#ListId/entry/create             ListItemCreateR GET POST
+/list/#ListId/entry/delete/#ListItemId ListItemDeleteR POST

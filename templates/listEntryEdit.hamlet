@@ -1,6 +1,0 @@
-<div>
-    <h1> _{MsgEditEntryHeader} #{listName list}
-    <form #editListItemForm method=post enctype=#{enctype} action="@{ListEntryEditR listId listEntryId}">
-        ^{entrywidget}
-        <div>
-            <input type=submit value=_{MsgEditListEntryButton}>

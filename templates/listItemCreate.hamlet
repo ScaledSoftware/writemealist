@@ -1,0 +1,7 @@
+<div>
+    <h3> Create a list entry for list #{listName list}
+    <p>
+      <form #createListItemForm method=post enctype=#{enctype} action="@{ListItemCreateR listId}">
+        ^{entrywidget}
+        <div>
+            <input type=submit value=_{MsgCreateListItemButton}>

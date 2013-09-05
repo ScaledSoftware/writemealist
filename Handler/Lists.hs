@@ -31,79 +31,79 @@ getListR listId = do
             redirect ListsR
         else do-- show the user the list.
             list <- runDB $ get404 listId
-            listItems <- runDB $ selectList [ListEntryList ==. listId]
-                                            [Asc ListEntryCompletedAt, 
-                                             Asc ListEntryCreatedAt]
-            (entrywidget, enctype) <- generateFormPost (listEntryEditForm listId Nothing)
+            listItems <- runDB $ selectList [ListItemList ==. listId]
+                                            [Asc ListItemCompletedAt, 
+                                             Asc ListItemCreatedAt]
+            (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
             defaultLayout $ do
                 setTitleI $ MsgAllListsTitle
                 $(widgetFile "list")
-                $(widgetFile "listEntryCreate")
+                $(widgetFile "listItemCreate")
 
-postListEntryCreateR :: ListId -> Handler Html
-postListEntryCreateR listId = do
+postListItemCreateR :: ListId -> Handler Html
+postListItemCreateR listId = do
     Entity uId _ <- requireAuth
-    ((res, entrywidget), enctype) <- runFormPost (listEntryEditForm listId Nothing)
+    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
-        FormSuccess (_, listEntryText) -> do
+        FormSuccess (_, listItemText) -> do
             currTime <- lift getCurrentTime
-            _ <- runDB $ insert (ListEntry listEntryText listId uId currTime Nothing Nothing)
+            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing)
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
             defaultLayout $ do
-                setTitleI MsgEnterListEntryName
-                $(widgetFile "listEntryCreate")
+                setTitleI MsgEnterListItemName
+                $(widgetFile "listItemCreate")
 
 
-getListEntryCreateR :: ListId -> Handler Html
-getListEntryCreateR listId = do
-    (entrywidget, enctype) <- generateFormPost (listEntryEditForm listId Nothing)
+getListItemCreateR :: ListId -> Handler Html
+getListItemCreateR listId = do
+    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
     list <- runDB $ get404 listId
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
-        $(widgetFile "listEntryCreate")
+        $(widgetFile "listItemCreate")
 
-postListEntryEditR :: ListId -> ListEntryId -> Handler Html
-postListEntryEditR listId listEntryId = do
+postListItemEditR :: ListId -> ListItemId -> Handler Html
+postListItemEditR listId listItemId = do
     Entity uId _ <- requireAuth
-    ((res, entrywidget), enctype) <- runFormPost (listEntryEditForm listId Nothing)
+    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
-        FormSuccess (_, listEntryText) -> do
-            runDB $ update listEntryId [ListEntryItem =. listEntryText] 
+        FormSuccess (_, listItemText) -> do
+            runDB $ update listItemId [ListItemName =. listItemText] 
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
 
             defaultLayout $ do
-                setTitleI MsgEnterListEntryName
-                $(widgetFile "listEntryEdit")
+                setTitleI MsgEnterListItemName
+                $(widgetFile "listItemEdit")
 
-getListEntryEditR :: ListId -> ListEntryId -> Handler Html
-getListEntryEditR listId listEntryId = do
-    listEntry <- runDB $ get404 listEntryId
-    (entrywidget, enctype) <- generateFormPost (listEntryEditForm listId (Just $ listEntryItem listEntry))
+getListItemEditR :: ListId -> ListItemId -> Handler Html
+getListItemEditR listId listItemId = do
+    listItem <- runDB $ get404 listItemId
+    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId (Just $ listItemName listItem))
     list <- runDB $ get404 listId
 
     defaultLayout $ do
-        setTitleI MsgEnterListEntryName
-        $(widgetFile "listEntryEdit")
+        setTitleI MsgEnterListItemName
+        $(widgetFile "listItemEdit")
 
 
-postListEntryDeleteR :: ListId -> ListEntryId -> Handler Html
-postListEntryDeleteR listId listEntryId = do
-    runDB $ delete listEntryId
+postListItemDeleteR :: ListId -> ListItemId -> Handler Html
+postListItemDeleteR listId listItemId = do
+    runDB $ delete listItemId
     redirect $ ListR listId
 
 
-listEntryEditForm :: ListId -> Maybe Text -> Form (ListId, Text)
-listEntryEditForm listId entryName = renderDivs $ (,)
+listItemEditForm :: ListId -> Maybe Text -> Form (ListId, Text)
+listItemEditForm listId entryName = renderDivs $ (,)
     <$> pure listId
-    <*> areq textField (fieldSettingsLabel MsgListEntryLabel) entryName
+    <*> areq textField (fieldSettingsLabel MsgListItemLabel) entryName
 
 
 listCreateForm :: UserId -> Form List
