@@ -1,8 +1,18 @@
+<h1>
+    _{MsgWelcome}
+    <a href="@{HomeR}">_{MsgWriteMeAList}
 <div>
-  $if null listIdNamePairs
-    <p> _{MsgNoListsYet}
-  $else
-    $forall (listId, listName) <- listIdNamePairs
-      <div>
-        <a href=@{ListR listId}>#{listName}
+  <p>
+      $maybe _ <- mAuth
+          <a href=@{AuthR LogoutR}>Logout
+      $nothing
+          <a href=@{AuthR LoginR}>Login
+<div>
+    $if null listIdNamePairs
+        <p> _{MsgNoListsYet}
+    $else
+        $forall (listId, listName) <- listIdNamePairs
+            <div>
+                <h2>
+                    <a href=@{ListR listId}>#{listName}
 

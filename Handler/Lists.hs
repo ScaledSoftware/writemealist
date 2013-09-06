@@ -7,6 +7,7 @@ import Data.Maybe (isJust, isNothing)
 getListsR :: Handler Html
 getListsR = do
     Entity uId user <- requireAuth
+    let mAuth = Just user
     listsIView <- runDB $ selectList ([ListEditorViewer ==. uId]) []
     let myListIds = map (\(Entity _ listEd) -> listEditorList listEd) listsIView
     myLists <- runDB $ selectList [ListId <-. myListIds] [Asc ListName]
@@ -31,13 +32,14 @@ getListR listId = do
             setMessageI MsgListAccessDenied
             redirect ListsR
         else do-- show the user the list.
+            mAuth <- maybeAuth
             list <- runDB $ get404 listId
             listItems <- runDB $ selectList [ListItemList ==. listId]
                                             [Asc ListItemCompletedAt, 
                                              Asc ListItemCreatedAt]
             (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
             defaultLayout $ do
-                setTitleI $ MsgAllListsTitle
+                setTitleI $ MsgListTitle (listName list)
                 $(widgetFile "list")
                 $(widgetFile "listItemCreate")
 
@@ -79,6 +81,7 @@ postListItemEditR listId listItemId = do
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
+            mAuth <- maybeAuth
 
             defaultLayout $ do
                 setTitleI MsgEnterListItemName
@@ -89,6 +92,7 @@ getListItemEditR listId listItemId = do
     listItem <- runDB $ get404 listItemId
     (entrywidget, enctype) <- generateFormPost (listItemEditForm listId (Just $ listItemName listItem))
     list <- runDB $ get404 listId
+    mAuth <- maybeAuth
 
     defaultLayout $ do
         setTitleI MsgEnterListItemName
