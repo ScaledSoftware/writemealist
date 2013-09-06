@@ -1,4 +1,4 @@
-<div>
+<div #createListDiv>
   <form method=post enctype=#{enctype} action="@{CreateListR}">
     ^{entrywidget}
     <div>

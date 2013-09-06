@@ -1,7 +1,7 @@
-<h1>
+<h1 #siteWelcomeH1>
     _{MsgWelcome}
     <a href="@{HomeR}">_{MsgWriteMeAList}
-<div>
+<div #loginOutDiv>
   <p>
       $maybe _ <- mAuth
           <a href=@{AuthR LogoutR}>Logout

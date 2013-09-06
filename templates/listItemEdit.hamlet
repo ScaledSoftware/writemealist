@@ -1,13 +1,13 @@
-<h1>
+<h1 #siteWelcomeH1>
     _{MsgWelcome}
     <a href="@{HomeR}">_{MsgWriteMeAList}
-<div>
+<div #loginOutDiv>
   <p>
       $maybe _ <- mAuth
           <a href=@{AuthR LogoutR}>Logout
       $nothing
           <a href=@{AuthR LoginR}>Login
-<div>
+<div #listItemEditDiv>
     <h1> _{MsgEditEntryHeader} #{listName list}
     <form #editListItemForm method=post enctype=#{enctype} action="@{ListItemEditR listId listItemId}">
         ^{entrywidget}
