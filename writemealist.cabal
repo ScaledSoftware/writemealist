@@ -73,6 +73,8 @@ library
                  , fast-logger                   >= 0.3
                  , transformers
                  , time
+                 , vault < 0.3.0.1
+                 , random
 
 executable         writemealist
     if flag(library-only)
@@ -83,6 +85,8 @@ executable         writemealist
     build-depends:     base
                      , writemealist
                      , yesod
+                     , vault < 0.3.0.1
+                     , random
 
     ghc-options:       -threaded -O2
 
@@ -103,3 +107,5 @@ test-suite test
                  , monad-logger
                  , transformers
                  , hspec
+                 , vault < 0.3.0.1
+                 , random
