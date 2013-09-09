@@ -20,6 +20,7 @@ ListAccessDenied: You do not have permission to access that list.
 ListItemLabel: Add a list item:
 EditEntryHeader: Edit Entry Text
 
+CreateShareLink: Create
 EditItem: Edit
 DeleteItem: Delete
 CompleteItem: Complete

@@ -9,6 +9,15 @@
           <a href=@{AuthR LoginR}>Login
 <div #listitems>
    <h1> #{listName list}
+   <p>
+     $if isJust mAuth
+       $if null shareUrl
+         <form method="post" action="@{SharedListCreate listId}" style=" display:inline!important;">
+            <input .gradient .curve type="submit" value="_{MsgCreateShareLink}" height=16>
+       $else
+         $forall (Entity _ (ListViewer _ _ randKey)) <- shareUrl
+             use this url to share this list:
+             <a href="@{SharedListShow listId randKey}"> use this url to share this list
    <ul>
      $forall (Entity listItemId listItem) <- listItems
        <li style="list-style-type:none;"> 

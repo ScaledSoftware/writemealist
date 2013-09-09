@@ -7,6 +7,16 @@ List
     name Text
     createdBy UserId
 
+ListEditor 
+    list ListId
+    viewer UserId
+    UniqueListEditor list viewer
+
+ListViewer
+    listId         ListId  -- list that is shared
+    sharingUserId  UserId  -- user that shared the list
+    randKey        Int     -- a random number for this url
+
 ListItem
     name Text
     list ListId
@@ -14,10 +24,6 @@ ListItem
     createdAt UTCTime
     completedBy UserId Maybe
     completedAt UTCTime Maybe
-
-ListEditor 
-    list ListId
-    viewer UserId
 
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

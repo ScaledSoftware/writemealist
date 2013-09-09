@@ -3,6 +3,44 @@ module Handler.Lists where
 import Import
 import Yesod.Auth
 import Data.Maybe (isJust, isNothing)
+import System.Random (getStdRandom, randomR)
+
+getSharedListShow :: ListId -> Int -> Handler Html
+getSharedListShow listId randKey = do
+    shareUrl <- runDB $ selectList [ListViewerListId  ==. listId,
+                                    ListViewerRandKey  ==. randKey] []
+
+    if null shareUrl
+        then do
+            setMessageI MsgListAccessDenied
+            redirect ListsR
+        else do-- show the user the list.
+            mAuth <- maybeAuth
+            case mAuth of
+                Nothing -> do
+                    list <- runDB $ get404 listId
+                    listItems <- runDB $ selectList [ListItemList ==. listId]
+                                                    [Asc ListItemCompletedAt, 
+                                                     Asc ListItemCreatedAt]
+                    defaultLayout $ do
+                        setTitleI $ MsgListTitle (listName list)
+                        $(widgetFile "list")
+                Just (Entity userId _) -> do
+                    maybeListEditor <- runDB $ getBy $ UniqueListEditor listId userId
+                    case maybeListEditor of
+                        Nothing -> do
+                            _ <- runDB $ insert (ListEditor listId userId)
+                            redirect $ ListR listId
+                        _ -> do
+                            redirect $ ListR listId
+
+
+postSharedListCreate :: ListId -> Handler Html
+postSharedListCreate listId = do
+    Entity uId _ <- requireAuth
+    randKey <- lift $ getStdRandom (randomR (100000, 536870910 :: Int)) -- the :: Int keeps the compiler from crashing
+    _ <- runDB $ insert $ ListViewer listId uId randKey
+    redirect $ ListR listId
 
 getListsR :: Handler Html
 getListsR = do
@@ -23,10 +61,14 @@ getListsR = do
 
 getListR :: ListId -> Handler Html
 getListR listId = do
-    Entity uId user <- requireAuth
+    Entity uId _ <- requireAuth
 
-    allowedLists <- runDB $ selectList ([ListEditorViewer ==. uId, 
-                                         ListEditorList ==. listId]) []
+    allowedLists <- runDB $ selectList [ListEditorViewer ==. uId, 
+                                        ListEditorList ==. listId] []
+
+    shareUrl <- runDB $ selectList [ListViewerListId  ==. listId,
+                                    ListViewerSharingUserId  ==. uId] []
+    
     if null allowedLists
         then do -- user can't view this list.
             setMessageI MsgListAccessDenied
