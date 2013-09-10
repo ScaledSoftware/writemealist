@@ -7,6 +7,9 @@
           <a href=@{AuthR LogoutR}>Logout
       $nothing
           <a href=@{AuthR LoginR}>Login
+          or, if you don't have an account
+          <a href=@{AuthR LoginR}>create an account
+          .
 <div #listitems>
    <h1> #{listName list}
    <p>
