@@ -1,7 +1,7 @@
 Default: &defaults
   host: "*4" # any IPv4 host
   port: 3000
-  approot: "http://localhost:3000"
+  approot: "http://192.168.1.72:3000"
   copyright: Copyright 2013, Scaled Software
   #analytics: UA-YOURCODE
 
@@ -15,5 +15,6 @@ Staging:
   <<: *defaults
 
 Production:
-  #approot: "http://www.writemealist.com"
+  port: 80
+  approot: "http://WriteMeAList.com"
   <<: *defaults
