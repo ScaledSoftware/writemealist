@@ -147,7 +147,7 @@ instance YesodAuth App where
 
     loginHandler = lift $ defaultLayout $ do
          [whamlet|\
-<div style="width:800px;margin:0 auto" > ^{login}
+<div style="margin:0 auto" > ^{login}
 |]
 
 login :: Widget

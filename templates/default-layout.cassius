@@ -1,4 +1,4 @@
-@loginboxwidth: 25em   /* 400px, but safe in more browsers */
+@loginboxwidth: 12.5em   /* 400px, but safe in more browsers */
 @loginbackgroundcolor: #FFFFFF
 @buttontopgrad: #DDDDDD
 @buttonbotgrad: #AAAAAA
