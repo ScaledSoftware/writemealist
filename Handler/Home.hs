@@ -20,6 +20,11 @@ getHomeR = do
     defaultLayout $ do
         aDomId <- newIdent
         setTitle "Welcome To Yesod!"
+        toWidgetHead
+            [hamlet|
+                <meta name="google-site-verification" content="hTMPzastDoFcR4-DLMM2jHogIhG5oWDRAZ4L-BVTWiU">
+            |]
+
         $(widgetFile "homepage")
 
 postHomeR :: Handler Html
