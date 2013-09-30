@@ -15,5 +15,5 @@ Staging:
   <<: *defaults
 
 Production:
-  #approot: "http://www.writemealist.com"
+  approot: "http://WriteMeAList.com"
   <<: *defaults
