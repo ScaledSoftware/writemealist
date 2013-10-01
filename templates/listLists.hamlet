@@ -1,12 +1,3 @@
-<h1>
-    _{MsgWelcome}
-    <a href="@{HomeR}">_{MsgWriteMeAList}
-<div>
-  <p>
-      $maybe _ <- mAuth
-          <a href=@{AuthR LogoutR}>Logout
-      $nothing
-          <a href=@{AuthR LoginR}>Login
 <div>
     $if null listIdNamePairs
         <p> _{MsgNoListsYet}

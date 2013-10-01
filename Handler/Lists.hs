@@ -18,12 +18,16 @@ getSharedListShow listId randKey = do
             mAuth <- maybeAuth
             case mAuth of
                 Nothing -> do
+                    let createItemAllowed = False
+                    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
                     list <- runDB $ get404 listId
                     listItems <- runDB $ selectList [ListItemList ==. listId]
                                                     [Asc ListItemCompletedAt, 
                                                      Asc ListItemCreatedAt]
                     defaultLayout $ do
                         setTitleI $ MsgListTitle (listName list)
+                        $(widgetFile "topNav")
+                        $(widgetFile "listItemCreate")
                         $(widgetFile "list")
                 Just (Entity userId _) -> do
                     maybeListEditor <- runDB $ getBy $ UniqueListEditor listId userId
@@ -55,6 +59,7 @@ getListsR = do
     (entrywidget, enctype) <- generateFormPost (listCreateForm uId)
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
+        $(widgetFile "topNav")
         $(widgetFile "listLists")
         $(widgetFile "createList")
 
@@ -79,15 +84,18 @@ getListR listId = do
             listItems <- runDB $ selectList [ListItemList ==. listId]
                                             [Asc ListItemCompletedAt, 
                                              Asc ListItemCreatedAt]
+            let createItemAllowed = True
             (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
             defaultLayout $ do
                 setTitleI $ MsgListTitle (listName list)
-                $(widgetFile "list")
+                $(widgetFile "topNav")
                 $(widgetFile "listItemCreate")
+                $(widgetFile "list")
 
 postListItemCreateR :: ListId -> Handler Html
 postListItemCreateR listId = do
     Entity uId _ <- requireAuth
+    let mAuth = Just uId
     ((res, entrywidget), enctype) <- runFormPost (listItemEditForm listId Nothing)
     -- TODO: Add check that this user owns this list
 
@@ -100,6 +108,7 @@ postListItemCreateR listId = do
             list <- runDB $ get404 listId
             defaultLayout $ do
                 setTitleI MsgEnterListItemName
+                $(widgetFile "topNav")
                 $(widgetFile "listItemCreate")
 
 

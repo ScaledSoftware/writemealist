@@ -16,5 +16,6 @@ getHomeR = do
                    content="hTMPzastDoFcR4-DLMM2jHogIhG5oWDRAZ4L-BVTWiU">
             |]
 
+        $(widgetFile "topNav")
         $(widgetFile "homepage")
 
