@@ -1,4 +1,4 @@
-WriteMeAList: www.WriteMeAList.com
+WriteMeAList: WriteMeAList.com
 Welcome: Welcome to
 WhyWMAL: Have you ever wanted to leave but needed to get a list of items to buy or tasks to do before you left? Now you can leave and tell the other people to just send you a list using
 AllListsTitle: All Lists
@@ -12,7 +12,7 @@ NewAccountBlurb: If you don't yet have an account, create one using either your 
 ListNameLabel: List Name
 EnterListName: Please enter a name for the new list
 EnterListItemName: Please enter a name for a new list entry
-CreateListButton: Create
+CreateListButton: New List
 CreateListItemButton: Add
 EditListItemButton: Save Changes
 ListAccessDenied: You do not have permission to access that list.
