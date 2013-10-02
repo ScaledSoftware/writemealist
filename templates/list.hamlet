@@ -1,32 +1,33 @@
-<div #listitems>
-   <h1> #{listName list}
-   <p>
-     $if isJust mAuth
-       $if null shareUrl
-         <form method="post" action="@{SharedListCreate listId}" style=" display:inline!important;">
-            <input .gradient .curve type="submit" value="_{MsgCreateShareLink}" height=16>
-       $else
-         $forall (Entity _ (ListViewer _ _ randKey)) <- shareUrl
-             use this url to share this list:
-             <a href="@{SharedListShow listId randKey}"> use this url to share this list
-   <ul>
-     $forall (Entity listItemId listItem) <- listItems
-       <li style="list-style-type:none;"> 
-          <form method="post" action="@{ListItemCompleteR listId listItemId}" style=" display:inline!important;">
-            $if isNothing (listItemCompletedAt listItem)
-                <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
-                    src="@{StaticR emptyBox16x16_png}"
-                    dataaltimage="@{StaticR checkedBox16x16_png}" value="_{MsgCompleteItem}">
+<div .insetsides>
+  <div #listitems>
+     <h1> #{listName list}
+     <p>
+       $if isJust mAuth
+         $if null shareUrl
+           <form method="post" action="@{SharedListCreate listId}" style=" display:inline!important;">
+              <input .gradient .curve type="submit" value="_{MsgCreateShareLink}" height=16>
+         $else
+           $forall (Entity _ (ListViewer _ _ randKey)) <- shareUrl
+               use this url to share this list:
+               <a href="@{SharedListShow listId randKey}"> use this url to share this list
+     <ul>
+       $forall (Entity listItemId listItem) <- listItems
+         <li style="list-style-type:none;"> 
+            <form method="post" action="@{ListItemCompleteR listId listItemId}" style=" display:inline!important;">
+              $if isNothing (listItemCompletedAt listItem)
+                  <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
+                      src="@{StaticR emptyBox16x16_png}"
+                      dataaltimage="@{StaticR checkedBox16x16_png}" value="_{MsgCompleteItem}">
+              $else
+                  <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
+                      src="@{StaticR checkedBox16x16_png}"
+                      dataaltimage="@{StaticR emptyBox16x16_png}" value="_{MsgCompleteItem}">
+            $if isJust (listItemCompletedAt listItem)
+                <strike>#{listItemName listItem}
             $else
-                <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
-                    src="@{StaticR checkedBox16x16_png}"
-                    dataaltimage="@{StaticR emptyBox16x16_png}" value="_{MsgCompleteItem}">
-          $if isJust (listItemCompletedAt listItem)
-              <strike>#{listItemName listItem}
-          $else
-              #{listItemName listItem} 
-          <form method="get" action="@{ListItemEditR listId listItemId}" style=" display:inline!important;">
-            <input .gradient .curve type="submit" value="_{MsgEditItem}" height=16>
-          &nbsp;
-          <form method="post" action="@{ListItemDeleteR listId listItemId}" style=" display:inline!important;">
-            <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
+                #{listItemName listItem} 
+            <form method="get" action="@{ListItemEditR listId listItemId}" style=" display:inline!important;">
+              <input .gradient .curve type="submit" value="_{MsgEditItem}" height=16>
+            &nbsp;
+            <form method="post" action="@{ListItemDeleteR listId listItemId}" style=" display:inline!important;">
+              <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
