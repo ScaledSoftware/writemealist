@@ -1,6 +1,9 @@
-<div #listItemEditDiv>
-    <h1> _{MsgEditEntryHeader} #{listName list}
+<div .insetsides>
+  <div #listItemEditDiv>
+     
     <form #editListItemForm method=post enctype=#{enctype} action="@{ListItemEditR listId listItemId}">
-        ^{entrywidget}
+      <p>
+        _{MsgEditEntryHeader (listName list)}
+      ^{entrywidget}
         <div>
-            <input .curve .gradient type=submit value=_{MsgEditListItemButton}>
+          <input .curve .gradient type=submit value=_{MsgEditListItemButton}>

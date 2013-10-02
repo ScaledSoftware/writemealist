@@ -1,4 +1,5 @@
-<div #listItemCreateDiv>
+<div .insetsides>
+  <div #listItemCreateDiv>
     <form #createListItemForm method=post enctype=#{enctype} action="@{ListItemCreateR listId}">
         ^{entrywidget}
         <div>

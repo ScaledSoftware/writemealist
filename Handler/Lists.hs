@@ -18,8 +18,8 @@ getSharedListShow listId randKey = do
             mAuth <- maybeAuth
             case mAuth of
                 Nothing -> do
-                    let createItemAllowed = False
-                    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
+                    aDomId <- newIdent
+                    (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
                     list <- runDB $ get404 listId
                     listItems <- runDB $ selectList [ListItemList ==. listId]
                                                     [Asc ListItemCompletedAt, 
@@ -85,7 +85,8 @@ getListR listId = do
                                             [Asc ListItemCompletedAt, 
                                              Asc ListItemCreatedAt]
             let createItemAllowed = True
-            (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
+            aDomId <- newIdent
+            (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
             defaultLayout $ do
                 setTitleI $ MsgListTitle (listName list)
                 $(widgetFile "topNav")
@@ -96,7 +97,8 @@ postListItemCreateR :: ListId -> Handler Html
 postListItemCreateR listId = do
     Entity uId _ <- requireAuth
     let mAuth = Just uId
-    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm listId Nothing)
+    aDomId <- newIdent
+    ((res, entrywidget), enctype) <- runFormPost (listItemCreateForm aDomId listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
@@ -114,7 +116,8 @@ postListItemCreateR listId = do
 
 getListItemCreateR :: ListId -> Handler Html
 getListItemCreateR listId = do
-    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId Nothing)
+    aDomId <- newIdent
+    (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
     list <- runDB $ get404 listId
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
@@ -123,7 +126,8 @@ getListItemCreateR listId = do
 postListItemEditR :: ListId -> ListItemId -> Handler Html
 postListItemEditR listId listItemId = do
     Entity uId _ <- requireAuth
-    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm listId Nothing)
+    aDomId <- newIdent
+    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm aDomId listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
@@ -136,17 +140,20 @@ postListItemEditR listId listItemId = do
 
             defaultLayout $ do
                 setTitleI MsgEnterListItemName
+                $(widgetFile "topNav")
                 $(widgetFile "listItemEdit")
 
 getListItemEditR :: ListId -> ListItemId -> Handler Html
 getListItemEditR listId listItemId = do
     listItem <- runDB $ get404 listItemId
-    (entrywidget, enctype) <- generateFormPost (listItemEditForm listId (Just $ listItemName listItem))
+    aDomId <- newIdent
+    (entrywidget, enctype) <- generateFormPost (listItemEditForm aDomId listId (Just $ listItemName listItem))
     list <- runDB $ get404 listId
     mAuth <- maybeAuth
 
     defaultLayout $ do
         setTitleI MsgEnterListItemName
+        $(widgetFile "topNav")
         $(widgetFile "listItemEdit")
 
 
@@ -173,10 +180,16 @@ postListItemCompleteR listId listItemId = do
     redirect $ ListR listId
 
 
-listItemEditForm :: ListId -> Maybe Text -> Form (ListId, Text)
-listItemEditForm listId entryName = renderTable $ (,)
+listItemEditForm :: Text -> ListId -> Maybe Text -> Form (ListId, Text)
+listItemEditForm aDomId listId entryName = renderTable $ (,)
     <$> pure listId
-    <*> areq textField (fieldSettingsLabel MsgListItemLabel) entryName
+    <*> areq textField ((fieldSettingsLabel MsgListItemEditLabel) {fsId = Just aDomId}) entryName
+
+listItemCreateForm :: Text -> ListId -> Maybe Text -> Form (ListId, Text)
+listItemCreateForm aDomId listId entryName = renderTable $ (,)
+    <$> pure listId
+    <*> areq textField ((fieldSettingsLabel MsgListItemCreateLabel) {fsId = Just aDomId}) entryName
+--  <*> areq textField "" entryName
 
 
 listCreateForm :: UserId -> Form List

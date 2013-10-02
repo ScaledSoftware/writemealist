@@ -1,7 +1,5 @@
 function setInitialFocus() {
-    var createForm=document.getElementById("createListItemForm");
-    var inputBoxes=createForm.getElementsByTagName("input");
-    inputBoxes[1].focus(); 
+    document.getElementById(#{toJSON aDomId}).focus();
 }
 
 onload = function() {
