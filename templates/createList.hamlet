@@ -1,5 +1,8 @@
-<div #createListDiv>
-  <form method=post enctype=#{enctype} action="@{CreateListR}">
-    ^{entrywidget}
-    <div>
+<div .insetsides>
+  <div #createListDiv>
+    <form method=post enctype=#{enctype} action="@{CreateListR}">
+      <h3>
+        _{MsgCreateListHeading}
+      ^{entrywidget}
+      <div>
         <input .curve .gradient type=submit value=_{MsgCreateListButton}>
