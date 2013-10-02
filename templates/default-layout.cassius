@@ -1,8 +1,46 @@
-@loginboxwidth: 12.5em   /* 400px, but safe in more browsers */
 @loginbackgroundcolor: #FFFFFF
+@bodycolor: #EEEEEE
+@containercolor: #FFFFFF
+@topnavcolor: #EEEEEE
+@backdropcolor: #DDDDDD
 @buttontopgrad: #DDDDDD
 @buttonbotgrad: #AAAAAA
 
+body
+    background-color: #{bodycolor}
+
+.container
+    align: center
+    left: auto
+    right: auto
+    background-color: #{containercolor}
+    max-width: 40em
+    width: auto
+
+.insetsides
+    padding: 0em 1em
+
+.copyright
+    padding: 0.5em 1em 1.5em 1em
+    
+#topNav
+    background-color: #{topnavcolor}
+    padding: 1em 1em 0.25em 1em
+    margin: 0em 0em 1em 0em
+   
+#message
+    background-color: #{topnavcolor}
+    text-align: center
+    border-style: outset
+    border-color: lightblue
+    padding: 0.25em
+
+
+#loginOutDiv
+    text-align: right
+
+#siteWelcomeH1
+    text-align: center
 
 #loginbox
     background-color: #{loginbackgroundcolor}
@@ -12,7 +50,6 @@
     margin-left: auto
     margin-right: auto
     height: 100%
-    max-width: #{loginboxwidth}
 
 .curve 
     -moz-border-radius: 5px /* Firefox */
@@ -24,7 +61,6 @@
     background: -moz-linear-gradient(top, #{buttontopgrad}, #{buttonbotgrad}) /* Firefox 3.6+ */
     background: -webkit-gradient(linear, left top, left bottom, from(#{buttontopgrad}), to(#{buttonbotgrad})) /* Safari & Chrome */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{buttontopgrad}', endColorstr='#{buttonbotgrad}') /* IE 5.5 - 7 */
-
 
 input[type=submit]
     font-size: 10px
