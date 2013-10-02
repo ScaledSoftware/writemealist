@@ -5,7 +5,7 @@
         <h3>
             _{MsgYourLists}
         <ul>
-           $forall (listId, listName) <- listIdNamePairs
+           $forall (listId, lName) <- listIdNamePairs
                <li>
-                   <a href=@{ListR listId}>#{listName}
+                   <a href=@{ListR listId}>#{lName}
 
