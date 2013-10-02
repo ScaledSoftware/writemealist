@@ -1,13 +1,14 @@
-<h1 #siteWelcomeH1>
-    _{MsgWelcome}
-    <a href="@{HomeR}">_{MsgWriteMeAList}
-<div #loginOutDiv>
-  <p>
-      $maybe _ <- mAuth
-          <a href=@{ListsR}>My Lists
-          <a href=@{AuthR LogoutR}>Logout
-      $nothing
-          <a href=@{AuthR LoginR}>Login
-          or, if you don't have an account
-          <a href=@{AuthR LoginR}>create an account
-          .
+<div #topNav>
+  <h1 #siteWelcomeH1>
+      _{MsgWelcome}
+      <a href="@{HomeR}">_{MsgWriteMeAList}
+  <div #loginOutDiv>
+      <p>
+          $maybe _ <- mAuth
+              <a href=@{ListsR}>My Lists
+              <a href=@{AuthR LogoutR}>Logout
+          $nothing
+              <a href=@{AuthR LoginR}>Login
+              or, if you don't have an account
+              <a href=@{AuthR LoginR}>create an account
+              .
