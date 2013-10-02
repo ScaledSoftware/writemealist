@@ -1,13 +1,13 @@
-<div #homeBodyDiv>
-<p> 
-   _{MsgWhyWMAL} 
-   <a href=@{HomeR}>_{MsgWriteMeAList}
-<P>
-      $maybe _ <- mAuth
-          <a href=@{ListsR}>_{MsgGotoYourLists}
-      $nothing
-          _{MsgLoginBlurb} 
-          <a href=@{AuthR LoginR}>Login
-          _{MsgNewAccountBlurb}
-          <a href=@{AuthR LoginR}>Create New Account
-
+<div .insetsides>
+  <div #homeBodyDiv>
+  <p> 
+    _{MsgWhyWMAL} 
+    <a href=@{HomeR}>_{MsgWriteMeAList}
+  <P>
+    $maybe _ <- mAuth
+      <a href=@{ListsR}>_{MsgGotoYourLists}
+    $nothing
+      _{MsgLoginBlurb} 
+      <a href=@{AuthR LoginR}>Login
+      _{MsgNewAccountBlurb}
+      <a href=@{AuthR LoginR}>Create New Account
