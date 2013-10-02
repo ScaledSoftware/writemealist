@@ -1,5 +1,4 @@
 <div .insetsides>
-  <div #homeBodyDiv>
   <p> 
     _{MsgWhyWMAL} 
     <a href=@{HomeR}>_{MsgWriteMeAList}
