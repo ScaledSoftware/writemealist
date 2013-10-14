@@ -3,6 +3,6 @@
     <form method=post enctype=#{enctype} action="@{CreateListR}">
       <h3>
         _{MsgCreateListHeading}
-      ^{entrywidget}
+      ^{widget}
       <div>
         <input .curve .gradient type=submit value=_{MsgCreateListButton}>

@@ -4,6 +4,6 @@
     <form #editListItemForm method=post enctype=#{enctype} action="@{ListItemEditR listId listItemId}">
       <p>
         _{MsgEditEntryHeader (listName list)}
-      ^{entrywidget}
+      ^{widget}
         <div>
           <input .curve .gradient type=submit value=_{MsgEditListItemButton}>
