@@ -23,7 +23,7 @@ ListItemCreateLabel:
 ListItemEditLabel: Edit the list item name:
 EditEntryHeader listName@Text: Edit entry in list "#{listName}"
 
-CreateShareLink: Create
+CreateShareLink: Create Share Link
 EditItem: Edit
 DeleteItem: Delete
 CompleteItem: Complete
