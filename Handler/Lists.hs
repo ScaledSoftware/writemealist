@@ -19,7 +19,7 @@ getSharedListShow listId randKey = do
             case mAuth of
                 Nothing -> do
                     aDomId <- newIdent
-                    (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
+                    (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
                     list <- runDB $ get404 listId
                     listItems <- runDB $ selectList [ListItemList ==. listId]
                                                     [Asc ListItemCompletedAt, 
@@ -56,7 +56,7 @@ getListsR = do
 
     let listIdNamePairs = map (\(Entity listId list) -> (listId, listName list)) myLists
 
-    (entrywidget, enctype) <- generateFormPost (listCreateForm uId)
+    (widget, enctype) <- generateFormPost (listCreateForm uId)
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
         $(widgetFile "topNav")
@@ -86,7 +86,7 @@ getListR listId = do
                                              Asc ListItemCreatedAt]
             let createItemAllowed = True
             aDomId <- newIdent
-            (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
+            (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
             defaultLayout $ do
                 setTitleI $ MsgListTitle (listName list)
                 $(widgetFile "topNav")
@@ -98,7 +98,7 @@ postListItemCreateR listId = do
     Entity uId _ <- requireAuth
     let mAuth = Just uId
     aDomId <- newIdent
-    ((res, entrywidget), enctype) <- runFormPost (listItemCreateForm aDomId listId Nothing)
+    ((res, widget), enctype) <- runFormPost (listItemCreateForm aDomId listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
@@ -117,7 +117,7 @@ postListItemCreateR listId = do
 getListItemCreateR :: ListId -> Handler Html
 getListItemCreateR listId = do
     aDomId <- newIdent
-    (entrywidget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
+    (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
     list <- runDB $ get404 listId
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
@@ -127,7 +127,7 @@ postListItemEditR :: ListId -> ListItemId -> Handler Html
 postListItemEditR listId listItemId = do
     Entity uId _ <- requireAuth
     aDomId <- newIdent
-    ((res, entrywidget), enctype) <- runFormPost (listItemEditForm aDomId listId Nothing)
+    ((res, widget), enctype) <- runFormPost (listItemEditForm aDomId listId Nothing)
     -- TODO: Add check that this user owns this list
 
     case res of 
@@ -147,7 +147,7 @@ getListItemEditR :: ListId -> ListItemId -> Handler Html
 getListItemEditR listId listItemId = do
     listItem <- runDB $ get404 listItemId
     aDomId <- newIdent
-    (entrywidget, enctype) <- generateFormPost (listItemEditForm aDomId listId (Just $ listItemName listItem))
+    (widget, enctype) <- generateFormPost (listItemEditForm aDomId listId (Just $ listItemName listItem))
     list <- runDB $ get404 listId
     mAuth <- maybeAuth
 
@@ -201,7 +201,7 @@ listCreateForm uId = renderTable $ List
 postCreateListR :: Handler Html
 postCreateListR = do
     Entity uId _ <- requireAuth
-    ((res, entrywidget), enctype) <- runFormPost (listCreateForm uId)
+    ((res, widget), enctype) <- runFormPost (listCreateForm uId)
     case res of 
         FormSuccess list -> do
             listId <- runDB $ insert (list {listCreatedBy = uId})
