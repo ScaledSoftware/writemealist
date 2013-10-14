@@ -9,6 +9,12 @@
 body
     background-color: #{bodycolor}
 
+.blendToBody
+    background-color: #{bodycolor}
+    position: relative
+    left: -1em
+    width: 42em
+
 .container
     align: center
     left: auto

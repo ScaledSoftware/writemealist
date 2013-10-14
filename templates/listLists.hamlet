@@ -1,6 +1,9 @@
 <div .insetsides>
     $if null listIdNamePairs
-        <p> _{MsgNoListsYet}
+        <h3>
+            _{MsgNoListsYet}
+        <p>
+            _{MsgUseFormBelowToCreateLists}
     $else
         <h3>
             _{MsgYourLists}
@@ -8,4 +11,5 @@
            $forall (listId, lName) <- listIdNamePairs
                <li>
                    <a href=@{ListR listId}>#{lName}
-
+    <div .blendToBody>
+       <p> &nbsp;
