@@ -27,3 +27,5 @@ CreateShareLink: Create Share Link
 EditItem: Edit
 DeleteItem: Delete
 CompleteItem: Complete
+
+UseFormBelowToCreateLists: Please use the form below to create your first list. Alternately, if someone mailed you a link to a list, please click on that link to add the list they shared with you to your account.
