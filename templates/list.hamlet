@@ -1,35 +1,55 @@
 <div .insetsides>
   <div #listitems>
-     <h1> #{listName list}
-     <p>
-       $if isJust mAuth
-         $if null shareUrl
-           <form method="post" action="@{SharedListCreate listId}" style=" display:inline!important;">
-              <input .gradient .curve type="submit" value="_{MsgCreateShareLink}" height=16>
-         $else
-           $forall (Entity _ (ListViewer _ _ randKeyVal)) <- shareUrl
-               use
-               <a href="@{SharedListShow listId randKeyVal}"> <b> this </b>
-               url to share this list.
-
-     <ul>
-       $forall (Entity listItemId listItem) <- listItems
-         <li style="list-style-type:none;"> 
-            <form method="post" action="@{ListItemCompleteR listId listItemId}" style=" display:inline!important;">
-              $if isNothing (listItemCompletedAt listItem)
-                  <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
-                      src="@{StaticR emptyBox16x16_png}"
-                      dataaltimage="@{StaticR checkedBox16x16_png}" value="_{MsgCompleteItem}">
-              $else
-                  <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
-                      src="@{StaticR checkedBox16x16_png}"
-                      dataaltimage="@{StaticR emptyBox16x16_png}" value="_{MsgCompleteItem}">
-            $if isJust (listItemCompletedAt listItem)
-                <strike>#{listItemName listItem}
-            $else
-                #{listItemName listItem} 
-            <form method="get" action="@{ListItemEditR listId listItemId}" style=" display:inline!important;">
-              <input .gradient .curve type="submit" value="_{MsgEditItem}" height=16>
-            &nbsp;
-            <form method="post" action="@{ListItemDeleteR listId listItemId}" style=" display:inline!important;">
-              <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
+    <h1> #{listName list}
+    <ul>
+      <div #listItemCreateDiv>
+        <form #createListItemForm method=post enctype=#{enctype} action="@{ListItemCreateR listId}">
+          ^{widget}
+          <div>
+            <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+    <h4> Current items in the list:
+    <ul>
+      $if null listItems
+        _{MsgNoListItems}
+      $else
+        $forall (Entity listItemId listItem) <- listItems
+          <li style="list-style-type:none;"> 
+             <form method="post" action="@{ListItemCompleteR listId listItemId}" style=" display:inline!important;">
+               $if isNothing (listItemCompletedAt listItem)
+                   <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
+                       src="@{StaticR emptyBox16x16_png}"
+                       dataaltimage="@{StaticR checkedBox16x16_png}" value="_{MsgCompleteItem}">
+               $else
+                   <input onmouseover="checkMOver(this)" onmouseout="checkMOut(this)" #itemcomplete type=image
+                       src="@{StaticR checkedBox16x16_png}"
+                       dataaltimage="@{StaticR emptyBox16x16_png}" value="_{MsgCompleteItem}">
+             $if isJust (listItemCompletedAt listItem)
+                 <strike>#{listItemName listItem}
+             $else
+                 #{listItemName listItem} 
+             <form method="get" action="@{ListItemEditR listId listItemId}" style=" display:inline!important;">
+               <input .gradient .curve type="submit" value="_{MsgEditItem}" height=16>
+             &nbsp;
+             <form method="post" action="@{ListItemDeleteR listId listItemId}" style=" display:inline!important;">
+               <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
+    <p>
+        &nbsp;
+    $if isJust mAuth
+         <h4> Share the list with someone
+         <ul>
+           $if null shareUrl
+             <h1 style="color: red; background-color: yellow;">
+               Please report that the create shared list feature isn't working
+           $else
+             $forall (Entity _ (ListViewer _ _ randKeyVal)) <- shareUrl
+               <p>
+                 You can share the list with friends very easily. Just tell them to create an account and them send
+                 them the url of the list. For convenience, just click on 
+                 <a href="mailto:?subject=Sharing a list '#{listName list}' using WriteMeAList.com&body=<p>Hi,<p>I started a shared list on WriteMeAList.com for us. Go there and create an account, and then click the following link to see the list '#{listName list}':<br><a href='@{SharedListShow listId randKeyVal}'>@{SharedListShow listId randKeyVal}</a><p>"> Mail the list to a friend
+                 
+               <p>
+                 Alternately, you can send the following URL with e-mail, IM, or whatever.
+                 <br>
+                   <a href="@{SharedListShow listId randKeyVal}"> @{SharedListShow listId randKeyVal}
+  
+  

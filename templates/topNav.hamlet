@@ -4,10 +4,10 @@
   <div #loginOutDiv>
       <p>
           $maybe _ <- mAuth
-              <a href=@{ListsR}>My Lists
-              <a href=@{AuthR LogoutR}>Logout
+              <a href=@{ListsR}>_{MsgAllLists}
+              <a href=@{AuthR LogoutR}>_{MsgLogoutLink}
           $nothing
-              <a href=@{AuthR LoginR}>Login
+              <a href=@{AuthR LoginR}>_{MsgLoginLink}
               or, if you don't have an account
-              <a href=@{AuthR LoginR}>create an account
+              <a href=@{AuthR LoginR}>_{MsgCreateAccount}
               .

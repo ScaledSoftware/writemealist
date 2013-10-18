@@ -4,7 +4,7 @@
     <a href=@{HomeR}>_{MsgWriteMeAList}
   <P>
     $maybe _ <- mAuth
-      <a href=@{ListsR}>_{MsgGotoYourLists}
+      <a href=@{ListsR}>_{MsgGotoAllLists}
     $nothing
       _{MsgLoginBlurb} 
       <a href=@{AuthR LoginR}>Login

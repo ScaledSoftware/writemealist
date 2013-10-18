@@ -38,14 +38,6 @@ getSharedListShow listId randKey = do
                         _ -> do
                             redirect $ ListR listId
 
-
-postSharedListCreate :: ListId -> Handler Html
-postSharedListCreate listId = do
-    Entity uId _ <- requireAuth
-    randKey <- lift $ getStdRandom (randomR (100000, 536870910 :: Int)) -- the :: Int keeps the compiler from crashing
-    _ <- runDB $ insert $ ListViewer listId uId randKey
-    redirect $ ListR listId
-
 getListsR :: Handler Html
 getListsR = do
     Entity uId user <- requireAuth
@@ -56,7 +48,8 @@ getListsR = do
 
     let listIdNamePairs = map (\(Entity listId list) -> (listId, listName list)) myLists
 
-    (widget, enctype) <- generateFormPost (listCreateForm uId)
+    txtBoxDomId <- newIdent
+    (widget, enctype) <- generateFormPost (listCreateForm uId txtBoxDomId)
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
         $(widgetFile "topNav")
@@ -71,8 +64,16 @@ getListR listId = do
     allowedLists <- runDB $ selectList [ListEditorViewer ==. uId, 
                                         ListEditorList ==. listId] []
 
-    shareUrl <- runDB $ selectList [ListViewerListId  ==. listId,
+    existingUrl <- runDB $ selectList [ListViewerListId  ==. listId,
                                     ListViewerSharingUserId  ==. uId] []
+
+    shareUrl <- if null existingUrl
+                 then do
+                    randKey <- lift $ getStdRandom (randomR (100000, 1999999999 :: Int))
+                    _ <- runDB $ insert $ ListViewer listId uId randKey
+                    runDB $ selectList [ListViewerListId  ==. listId,
+                                                    ListViewerSharingUserId  ==. uId] []
+                 else return existingUrl
     
     if null allowedLists
         then do -- user can't view this list.
@@ -90,7 +91,6 @@ getListR listId = do
             defaultLayout $ do
                 setTitleI $ MsgListTitle (listName list)
                 $(widgetFile "topNav")
-                $(widgetFile "listItemCreate")
                 $(widgetFile "list")
 
 postListItemCreateR :: ListId -> Handler Html
@@ -192,22 +192,25 @@ listItemCreateForm aDomId listId entryName = renderTable $ (,)
 --  <*> areq textField "" entryName
 
 
-listCreateForm :: UserId -> Form List
-listCreateForm uId = renderTable $ List
-    <$> areq textField (fieldSettingsLabel MsgListNameLabel) Nothing
+listCreateForm :: UserId -> Text -> Form List
+listCreateForm uId txtBoxDomId = renderTable $ List
+    <$> areq textField ((fieldSettingsLabel MsgListNameLabel) {fsId = Just txtBoxDomId}) Nothing
     <*> pure uId
 
 
 postCreateListR :: Handler Html
 postCreateListR = do
     Entity uId _ <- requireAuth
-    ((res, widget), enctype) <- runFormPost (listCreateForm uId)
+    txtBoxDomId <- newIdent
+    ((res, widget), enctype) <- runFormPost (listCreateForm uId txtBoxDomId)
     case res of 
         FormSuccess list -> do
             listId <- runDB $ insert (list {listCreatedBy = uId})
             _ <- runDB $ insert (ListEditor { listEditorList = listId
                                             , listEditorViewer = uId
                                             })
+            randKey <- lift $ getStdRandom (randomR (100000, 1999999999 :: Int))
+            _ <- runDB $ insert $ ListViewer listId uId randKey
             redirect $ ListR listId
         _ -> defaultLayout $ do
             setTitleI MsgEnterListName

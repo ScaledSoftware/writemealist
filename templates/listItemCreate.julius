@@ -1,7 +1,3 @@
-function setInitialFocus() {
-    document.getElementById(#{toJSON aDomId}).focus();
-}
-
 onload = function() {
-   setInitialFocus();
+    document.getElementById(#{toJSON aDomId}).focus();
 }

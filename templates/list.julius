@@ -1,3 +1,6 @@
+onload = function() {
+    document.getElementById(#{toJSON aDomId}).focus();
+}
 
 function checkMOut(param) {
     console.log("checkMOut");

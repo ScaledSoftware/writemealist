@@ -9,7 +9,6 @@
 /list/create CreateListR POST
 /list/show/#ListId ListR GET
 /sharedlist/show/#ListId/#Int            SharedListShow GET
-/sharedlist/createurl/#ListId            SharedListCreate POST
 
 /list/#ListId/entry/edit/#ListItemId     ListItemEditR GET POST
 /list/#ListId/entry/create               ListItemCreateR GET POST
