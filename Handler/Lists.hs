@@ -2,8 +2,9 @@ module Handler.Lists where
 
 import Import
 import Yesod.Auth
-import Data.Maybe (isJust, isNothing)
+import Data.Maybe
 import System.Random (getStdRandom, randomR)
+import Data.List (sort, nub)
 
 getSharedListShow :: ListId -> Int -> Handler Html
 getSharedListShow listId randKey = do
@@ -11,32 +12,32 @@ getSharedListShow listId randKey = do
                                     ListViewerRandKey  ==. randKey] []
 
     if null shareUrl
-        then do
-            setMessageI MsgListAccessDenied
-            redirect ListsR
-        else do-- show the user the list.
-            mAuth <- maybeAuth
-            case mAuth of
-                Nothing -> do
-                    aDomId <- newIdent
-                    (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
-                    list <- runDB $ get404 listId
-                    listItems <- runDB $ selectList [ListItemList ==. listId]
-                                                    [Asc ListItemCompletedAt, 
-                                                     Asc ListItemCreatedAt]
-                    defaultLayout $ do
-                        setTitleI $ MsgListTitle (listName list)
-                        $(widgetFile "topNav")
-                        $(widgetFile "listItemCreate")
-                        $(widgetFile "list")
-                Just (Entity userId _) -> do
-                    maybeListEditor <- runDB $ getBy $ UniqueListEditor listId userId
-                    case maybeListEditor of
-                        Nothing -> do
-                            _ <- runDB $ insert (ListEditor listId userId)
-                            redirect $ ListR listId
-                        _ -> do
-                            redirect $ ListR listId
+     then do
+        setMessageI MsgListAccessDenied
+        redirect ListsR
+     else do-- show the user the list.
+        mAuth <- maybeAuth
+        case mAuth of
+         Nothing -> do
+            aDomId <- newIdent
+            (widget, enctype) <- generateFormPost (listItemCreateForm aDomId "" "")
+            list <- runDB $ get404 listId
+            listItems <- runDB $ selectList [ListItemList ==. listId]
+                                            [Asc ListItemCategory, Asc ListItemName, Asc ListItemCreatedAt]
+            let itemsByCategory = groupItemsByCategory listItems
+
+            defaultLayout $ do
+                setTitleI $ MsgListTitle (listName list)
+                $(widgetFile "topNav")
+                $(widgetFile "listItemCreate")
+                $(widgetFile "list")
+         Just (Entity userId _) -> do
+             maybeListEditor <- runDB $ getBy $ UniqueListEditor listId userId
+             case maybeListEditor of
+                 Nothing -> do
+                     _ <- runDB $ insert (ListEditor listId userId)
+                     redirect $ ListR listId
+                 _ -> redirect $ ListR listId
 
 getListsR :: Handler Html
 getListsR = do
@@ -59,7 +60,7 @@ getListsR = do
 
 getListR :: ListId -> Handler Html
 getListR listId = do
-    Entity uId _ <- requireAuth
+    Entity uId uAuth <- requireAuth
 
     allowedLists <- runDB $ selectList [ListEditorViewer ==. uId, 
                                         ListEditorList ==. listId] []
@@ -67,44 +68,63 @@ getListR listId = do
     existingUrl <- runDB $ selectList [ListViewerListId  ==. listId,
                                     ListViewerSharingUserId  ==. uId] []
 
-    shareUrl <- if null existingUrl
-                 then do
+    shareUrl <- if not $ null existingUrl
+                 then return existingUrl
+                 else do
                     randKey <- lift $ getStdRandom (randomR (100000, 1999999999 :: Int))
                     _ <- runDB $ insert $ ListViewer listId uId randKey
                     runDB $ selectList [ListViewerListId  ==. listId,
                                                     ListViewerSharingUserId  ==. uId] []
-                 else return existingUrl
     
     if null allowedLists
-        then do -- user can't view this list.
-            setMessageI MsgListAccessDenied
-            redirect ListsR
-        else do-- show the user the list.
-            mAuth <- maybeAuth
-            list <- runDB $ get404 listId
-            listItems <- runDB $ selectList [ListItemList ==. listId]
-                                            [Asc ListItemCompletedAt, 
-                                             Asc ListItemCreatedAt]
-            let createItemAllowed = True
-            aDomId <- newIdent
-            (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
-            defaultLayout $ do
-                setTitleI $ MsgListTitle (listName list)
-                $(widgetFile "topNav")
-                $(widgetFile "list")
+     then do -- user can't view this list.
+        setMessageI MsgListAccessDenied
+        redirect ListsR
+     else do-- show the user the list.
+        let mAuth = Just uAuth
+        list <- runDB $ get404 listId
+        listItems <- runDB $ selectList [ListItemList ==. listId]
+                                        [Asc ListItemCategory,
+                                         Asc ListItemName, 
+                                         Asc ListItemCreatedAt]
+
+        let itemsByCategory = groupItemsByCategory listItems
+
+        let createItemAllowed = True
+        aDomId <- newIdent
+        (widget, enctype) <- generateFormPost (listItemCreateForm aDomId "" "")
+        defaultLayout $ do
+            setTitleI $ MsgListTitle (listName list)
+            $(widgetFile "topNav")
+            $(widgetFile "list")
+
+getCategoryFromEntity :: Entity ListItem -> Text
+getCategoryFromEntity (Entity _ item) = listItemCategory item
+
+getCategoriesFromList :: [Entity ListItem] -> [Text]
+getCategoriesFromList list = nub $ sort $ map getCategoryFromEntity list
+
+groupItemsByCategory :: [Entity ListItem] -> [(Text, [Entity ListItem])]
+groupItemsByCategory itemList = groupItemsByCategory' (getCategoriesFromList itemList) itemList
+  where
+    groupItemsByCategory' :: [Text] -> [Entity ListItem] -> [(Text, [Entity ListItem])]
+    groupItemsByCategory' [] list = [("", list)]
+    groupItemsByCategory' (cat:cats) list = (cat,thisCatList) : groupItemsByCategory' cats otherCatsList
+      where
+        (thisCatList, otherCatsList) = span (\li -> getCategoryFromEntity li == cat) list
 
 postListItemCreateR :: ListId -> Handler Html
 postListItemCreateR listId = do
+    -- TODO: Add check that this user owns this list
     Entity uId _ <- requireAuth
     let mAuth = Just uId
     aDomId <- newIdent
-    ((res, widget), enctype) <- runFormPost (listItemCreateForm aDomId listId Nothing)
-    -- TODO: Add check that this user owns this list
+    ((res, widget), enctype) <- runFormPost (listItemCreateForm aDomId "" "")
 
     case res of 
-        FormSuccess (_, listItemText) -> do
+        FormSuccess (listItemText, category) -> do
             currTime <- lift getCurrentTime
-            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing)
+            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing category)
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -117,7 +137,7 @@ postListItemCreateR listId = do
 getListItemCreateR :: ListId -> Handler Html
 getListItemCreateR listId = do
     aDomId <- newIdent
-    (widget, enctype) <- generateFormPost (listItemCreateForm aDomId listId Nothing)
+    (widget, enctype) <- generateFormPost (listItemCreateForm aDomId "" "")
     list <- runDB $ get404 listId
     defaultLayout $ do
         setTitleI $ MsgAllListsTitle
@@ -125,14 +145,14 @@ getListItemCreateR listId = do
 
 postListItemEditR :: ListId -> ListItemId -> Handler Html
 postListItemEditR listId listItemId = do
+    -- TODO: Add check that this user owns this list
     Entity uId _ <- requireAuth
     aDomId <- newIdent
-    ((res, widget), enctype) <- runFormPost (listItemEditForm aDomId listId Nothing)
-    -- TODO: Add check that this user owns this list
+    ((res, widget), enctype) <- runFormPost (listItemEditForm aDomId "" "")
 
     case res of 
-        FormSuccess (_, listItemText) -> do
-            runDB $ update listItemId [ListItemName =. listItemText] 
+        FormSuccess (itemName, category) -> do
+            _ <- runDB $ update listItemId [ListItemName =. itemName, ListItemCategory =. category] 
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -146,8 +166,13 @@ postListItemEditR listId listItemId = do
 getListItemEditR :: ListId -> ListItemId -> Handler Html
 getListItemEditR listId listItemId = do
     listItem <- runDB $ get404 listItemId
+
+    let itemName = listItemName listItem
+    let category = listItemCategory listItem
+
     aDomId <- newIdent
-    (widget, enctype) <- generateFormPost (listItemEditForm aDomId listId (Just $ listItemName listItem))
+
+    (widget, enctype) <- generateFormPost (listItemEditForm aDomId itemName category)
     list <- runDB $ get404 listId
     mAuth <- maybeAuth
 
@@ -171,26 +196,25 @@ postListItemCompleteR listId listItemId = do
         listItem <- get404 listItemId
         if isNothing (listItemCompletedAt listItem)
            then do
-               update listItemId [ListItemCompletedBy =. (Just uId)] 
-               update listItemId [ListItemCompletedAt =. (Just currTime)] 
+               update listItemId [ListItemCompletedBy =. (Just uId), 
+                                  ListItemCompletedAt =. (Just currTime)] 
            else do
-               update listItemId [ListItemCompletedBy =. Nothing] 
-               update listItemId [ListItemCompletedAt =. Nothing] 
+               update listItemId [ListItemCompletedBy =. Nothing, 
+                                  ListItemCompletedAt =. Nothing] 
 
     redirect $ ListR listId
 
 
-listItemEditForm :: Text -> ListId -> Maybe Text -> Form (ListId, Text)
-listItemEditForm aDomId listId entryName = renderTable $ (,)
-    <$> pure listId
-    <*> areq textField ((fieldSettingsLabel MsgListItemEditLabel) {fsId = Just aDomId}) entryName
+listItemEditForm :: Text -> Text -> Text -> Form (Text, Text)
+listItemEditForm aDomId entryName catName = renderTable $ (,)
+    <$> areq textField ((fieldSettingsLabel MsgListItemEditLabel) {fsId = Just aDomId}) (Just entryName)
+    <*> areq textField (fieldSettingsLabel MsgListItemCategoryLabel) (Just catName)
 
-listItemCreateForm :: Text -> ListId -> Maybe Text -> Form (ListId, Text)
-listItemCreateForm aDomId listId entryName = renderTable $ (,)
-    <$> pure listId
-    <*> areq textField ((fieldSettingsLabel MsgListItemCreateLabel) {fsId = Just aDomId}) entryName
---  <*> areq textField "" entryName
-
+listItemCreateForm :: Text -> Text -> Text -> Form (Text, Text)
+listItemCreateForm aDomId entryName catName = renderTable $ (,)
+    <$> areq textField ((fieldSettingsLabel MsgListItemCreateLabel) {fsId = Just aDomId}) (Just entryName)
+    -- make next line optional
+    <*> areq textField (fieldSettingsLabel MsgListItemCategoryLabel) (Just catName)
 
 listCreateForm :: UserId -> Text -> Form List
 listCreateForm uId txtBoxDomId = renderTable $ List

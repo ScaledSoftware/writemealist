@@ -7,6 +7,12 @@ List
     name Text
     createdBy UserId
 
+Category
+    name Text
+    precedence Int
+    listId ListId
+    viewer UserId
+
 ListEditor 
     list ListId
     viewer UserId
@@ -24,6 +30,7 @@ ListItem
     createdAt UTCTime
     completedBy UserId Maybe
     completedAt UTCTime Maybe
+    category Text
 
 
- -- By default this file is used in Model.hs (which is imported by Foundation.hs)
+ -- This file is used in Model.hs (which is imported by Foundation.hs)
