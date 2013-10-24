@@ -228,7 +228,7 @@ postListItemCompleteR listId listItemId = do
 
     redirect $ ListR listId
 
-listItemCreateForm :: Html -> [Category] -> Text -> Text -> Maybe CategoryId 
+listItemCreateForm :: Html -> [Entity Category] -> Text -> Text -> Maybe CategoryId 
                            -> MForm Handler (FormResult (Text, Maybe CategoryId), Widget)
 listItemCreateForm extra categories aDomId entryName catName = do
     let cats = zip (map (categoryName . entityVal) categories) (map entityKey categories)
