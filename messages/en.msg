@@ -24,9 +24,9 @@ EditListItemButton: Save Changes
 ListAccessDenied: You do not have permision to access that list.
 
 NoListItems: You have not added any items to this list yet. Please add to the list by typing the name of an item or task in the box above and clicking "Add To List"
-ListItemCreateLabel:
+ListItemCreateLabel: Item
 ListItemCategoryLabel: Category
-ListItemEditLabel: Edit the list item name:
+ListItemEditLabel: Item
 EditEntryHeader listName@Text: Edit entry in list "#{listName}"
 
 CreateAccount: Create Account
