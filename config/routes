@@ -10,7 +10,8 @@
 /list/show/#ListId ListR GET
 /sharedlist/show/#ListId/#Int            SharedListShow GET
 
-/list/#ListId/entry/edit/#ListItemId     ListItemEditR GET POST
-/list/#ListId/entry/create               ListItemCreateR GET POST
-/list/#ListId/entry/delete/#ListItemId   ListItemDeleteR POST
-/list/#ListId/entry/complete/#ListItemId ListItemCompleteR POST
+/list/#ListId/entry/edit/#ListItemId     ListItemEditR       GET POST
+/list/#ListId/entry/create               ListItemCreateR     GET POST
+/list/#ListId/entry/delete/#ListItemId   ListItemDeleteR         POST
+/list/#ListId/entry/complete/#ListItemId ListItemCompleteR       POST
+/list/#ListId/category/create/ ListCategoryCreateR POST

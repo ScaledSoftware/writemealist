@@ -4,10 +4,11 @@
     <ul>
       <div #listItemCreateDiv>
         <form #createListItemForm method=post enctype=#{enctype} action="@{ListItemCreateR listId}">
-          <table>
-              ^{widget}
-          <div>
-            <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+          <h5> Add item to list:
+              ^{widget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+        <form #createListCategoryForm method=post enctype=#{catenctype} action="@{ListCategoryCreateR listId}">
+          <h5> Add category to list:
+              ^{catwidget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
     <h4> Current items in the list:
     <ul>
       $if null listItems
