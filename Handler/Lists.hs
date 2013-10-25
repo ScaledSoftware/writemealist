@@ -104,12 +104,21 @@ getListR listId = do
 catIdToNameLookup :: [Entity Category] -> [(CategoryId, Text)]
 catIdToNameLookup cats = zip (map entityKey cats) (map (categoryName . entityVal) cats)
 
-catIdToName :: [Entity Category] -> CategoryId -> Maybe Text
+catIdToName :: [Entity Category] -> Maybe CategoryId -> Maybe Text
+catIdToName _  Nothing = Nothing
 catIdToName [] _ = Nothing
-catIdToName ((Entity catId cat):cats) cId =
+catIdToName ((Entity catId cat):cats) (Just cId) =
     if catId == cId
         then Just $ categoryName cat
-        else catIdToName cats cId
+        else catIdToName cats (Just cId)
+
+catNameToId :: [Entity Category] -> Maybe Text -> Maybe CategoryId
+catNameToId _          Nothing = Nothing
+catNameToId []         _       = Nothing
+catNameToId ((Entity key cat):categories) (Just catName) = 
+    if (categoryName cat) == catName
+        then Just key
+        else catNameToId categories (Just catName)
 
 listItemCategoryName :: [(CategoryId, Text)] -> ListItem -> Text
 listItemCategoryName cat2Name li =
@@ -143,9 +152,10 @@ postListItemCreateR listId = do
     ((res, widget), enctype) <- runFormPost (\x -> listItemCreateForm x categories aDomId "" Nothing)
 
     case res of 
-        FormSuccess (listItemText, category) -> do
+        FormSuccess (listItemText, mCatName) -> do
+            let mCatId = catNameToId categories mCatName
             currTime <- lift getCurrentTime
-            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing category)
+            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing mCatId)
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -174,8 +184,9 @@ postListItemEditR listId listItemId = do
     ((res, widget), enctype) <- runFormPost (\x -> listItemCreateForm x categories aDomId "" Nothing)
 
     case res of 
-        FormSuccess (itemName, category) -> do
-            _ <- runDB $ update listItemId [ListItemName =. itemName, ListItemCatId =. category] 
+        FormSuccess (itemName, mCatName) -> do
+            _ <- runDB $ update listItemId [ListItemName =. itemName,
+                                            ListItemCatId =. (catNameToId categories mCatName)] 
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -192,7 +203,7 @@ getListItemEditR listId listItemId = do
 
     let itemName = listItemName listItem
     categories <- runDB $ selectList [CategoryListId ==. listId] []
-    let category = listItemCatId listItem
+    let category = (catIdToName categories) $ listItemCatId listItem
 
     aDomId <- newIdent
 
@@ -228,10 +239,11 @@ postListItemCompleteR listId listItemId = do
 
     redirect $ ListR listId
 
-listItemCreateForm :: Html -> [Entity Category] -> Text -> Text -> Maybe CategoryId 
-                           -> MForm Handler (FormResult (Text, Maybe CategoryId), Widget)
+listItemCreateForm :: Html -> [Entity Category] -> Text -> Text -> Maybe Text
+                           -> MForm Handler (FormResult (Text, Maybe Text), Widget)
 listItemCreateForm extra categories aDomId entryName catName = do
-    let cats = zip (map (categoryName . entityVal) categories) (map entityKey categories)
+    let catNames = map (categoryName . entityVal) categories
+    let cats = zip catNames catNames
     (itemRes, itemView) <- mreq textField ((fieldSettingsLabel MsgListItemCreateLabel) {fsId = Just aDomId}) (Just entryName)
     (catRes, catView) <- mopt (selectFieldList cats) (fieldSettingsLabel MsgListItemCategoryLabel) (Just catName)
 
