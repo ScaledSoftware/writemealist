@@ -1,22 +1,33 @@
 onload = function() {
-    document.getElementById(#{toJSON aDomId}).focus();
+    var addBox = document.getElementById(#{toJSON listItemCDomId});
+
+    addBox.focus();
+    addBox.onfocus = function () {
+        addBox.select();
+
+        // Work around Chrome's little problem
+        addBox.onmouseup = function() {
+            // Prevent further mouseup intervention
+            addBox.onmouseup = null;
+            return false;
+        };
+    };
 }
 
 function checkMOut(param) {
-    console.log("checkMOut");
-    console.log("    param.src=" + param.src)
-    console.log("    param.orig=" + param.dataorigimage)
-    console.log("    param.alt=" + param.dataaltimage)
-
+//    console.log("checkMOut");
+//    console.log("    param.src=" + param.src)
+//    console.log("    param.orig=" + param.dataorigimage)
+//    console.log("    param.alt=" + param.dataaltimage)
     param.dataaltimage = param.getAttribute('src');
     param.src = param.dataorigimage;
 }
 
 function checkMOver(param) {
-    console.log("checkMOver");
-    console.log("    param.src=" + param.src)
-    console.log("    param.orig=" + param.dataorigimage)
-    console.log("    param.alt=" + param.dataaltimage)
+//    console.log("checkMOver");
+//    console.log("    param.src=" + param.src)
+//    console.log("    param.orig=" + param.dataorigimage)
+//    console.log("    param.alt=" + param.dataaltimage)
     param.dataorigimage = param.getAttribute('src');
     param.src = param.getAttribute('dataaltimage');
 }

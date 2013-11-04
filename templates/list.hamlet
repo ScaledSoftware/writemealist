@@ -1,20 +1,17 @@
 <div .insetsides>
   <div #listitems>
     <h1> #{listName list}
-    <ul>
-      <div #listItemCreateDiv>
-        <form #createListCategoryForm method=post enctype=#{catenctype} action="@{ListCategoryCreateR listId}">
-          <h5> Add category to list:
-              ^{catwidget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
-    <h4> Current items in the list:
+            <form .createListItemForm method=post enctype=#{nocatEnc} action="@{ListItemCreateKnownCatR listId}" style=" display:inline!important;">
+              ^{nocatWidg}<input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
     $if null listItems
       _{MsgNoListItems}
     $else
       $forall (categoryNameText, itemsInCategory, (fWidg, fEnc)) <- itemsByCatWAdd
         <ul>
-          <h5> #{fixNoCategoryName categoryNameText} 
-            <form .createListItemForm method=post enctype=#{fEnc} action="@{ListItemCreateKnownCatR listId}" style=" display:inline!important;">
-              ^{fWidg} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+          $if (not $ T.null categoryNameText)
+              <h5> #{categoryNameText} 
+                <form .createListItemForm method=post enctype=#{fEnc} action="@{ListItemCreateKnownCatR listId}" style=" display:inline!important;">
+                  ^{fWidg} <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
                              
           <div .insetsides>
             $forall (Entity listItemId listItem) <- itemsInCategory
@@ -39,6 +36,12 @@
                    <input type=image src="@{StaticR trashcan_png}" value=_{MsgCreateListItemButton}>
     <p>
         &nbsp;
+    <div #listItemCreateDiv>
+        <form #createListCategoryForm method=post enctype=#{catenctype} action="@{ListCategoryCreateR listId}">
+            <h4> Add category to list:
+                ^{catwidget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+    <p>
+        &nbsp;
     $if isJust mAuth
          <h4> Share the list with someone
          <ul>
@@ -55,6 +58,7 @@
                <p>
                  Alternately, you can send the following URL with e-mail, IM, or whatever.
                  <br>
-                   <a href="@{SharedListShow listId randKeyVal}"> @{SharedListShow listId randKeyVal}
+                   <span>
+                        <a href="@{SharedListShow listId randKeyVal}"> @{SharedListShow listId randKeyVal}
   
   

@@ -23,7 +23,7 @@ CreateListItemButton: Add To List
 EditListItemButton: Save Changes
 ListAccessDenied: You do not have permision to access that list.
 
-NoListItems: You have not added any items to this list yet. Please add to the list by typing the name of an item or task in the box above and clicking "Add To List"
+NoListItems: You have not added any items to this list yet. Please add to the list by typing the name of an item or task in the box above and clicking "Add"
 ListItemCreateLabel: Item
 ListItemCategoryLabel: Category
 ListItemEditLabel: Item

@@ -72,8 +72,30 @@ input[type=submit]
     font-size: 10px
     font-weight: bold
     height: 16px
-    padding: 0px 4px 1px 4px
+    padding: 0px 2px 2px 2px
     border: 0
     position: relative
     top: 3px
 
+h5 input
+    height: 10px
+h5 input[type=submit]
+    font-size: 10px
+    font-weight: bold
+    height: 16px
+    padding: 0px 4px 1px 4px
+    border: 0
+    position: relative
+    top: 0px
+
+h1 input
+    height: 14px
+
+h1 input[type=submit]
+    font-size: 14px
+    font-weight: bold
+    height: 22px
+    padding: 0px 4px 1px 4px
+    border: 0
+    position: relative
+    top: 0px
