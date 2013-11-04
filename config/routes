@@ -15,3 +15,5 @@
 /list/#ListId/entry/delete/#ListItemId   ListItemDeleteR         POST
 /list/#ListId/entry/complete/#ListItemId ListItemCompleteR       POST
 /list/#ListId/category/create/ ListCategoryCreateR POST
+
+/list/#ListId/entry/createKnownCat ListItemCreateKnownCatR POST

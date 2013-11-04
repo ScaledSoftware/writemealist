@@ -3,19 +3,19 @@
     <h1> #{listName list}
     <ul>
       <div #listItemCreateDiv>
-        <form #createListItemForm method=post enctype=#{enctype} action="@{ListItemCreateR listId}">
-          <h5> Add item to list:
-              ^{widget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
         <form #createListCategoryForm method=post enctype=#{catenctype} action="@{ListCategoryCreateR listId}">
           <h5> Add category to list:
               ^{catwidget} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
     <h4> Current items in the list:
-    <ul>
-      $if null listItems
-        _{MsgNoListItems}
-      $else
-        $forall (categoryNameText, itemsInCategory) <- itemsByCategory
-          <h5> #{categoryNameText}
+    $if null listItems
+      _{MsgNoListItems}
+    $else
+      $forall (categoryNameText, itemsInCategory, (fWidg, fEnc)) <- itemsByCatWAdd
+        <ul>
+          <h5> #{fixNoCategoryName categoryNameText} 
+            <form .createListItemForm method=post enctype=#{fEnc} action="@{ListItemCreateKnownCatR listId}" style=" display:inline!important;">
+              ^{fWidg} &nbsp; <input .curve .gradient type=submit value=_{MsgCreateListItemButton}>
+                             
           <div .insetsides>
             $forall (Entity listItemId listItem) <- itemsInCategory
               <li style="list-style-type:none;"> 
