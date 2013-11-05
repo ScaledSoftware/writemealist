@@ -99,7 +99,7 @@ getListR listId = do
                              (\formRes -> return (catName, lis, formRes))) itemsByCategory
 
         listItemCDomId <- newIdent >>= (return . Just)
-        (nocatWidg, nocatEnc) <- generateFormPost (\x -> listItemCreateForm x listItemCDomId "Add an item" (Just ""))
+        (nocatWidg, nocatEnc) <- generateFormPost (\x -> listItemCreateForm x listItemCDomId "" (Just ""))
 
         let createItemAllowed = True
         aDomId <- newIdent
