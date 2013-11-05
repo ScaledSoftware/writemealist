@@ -41,7 +41,7 @@ getSharedListShow listId randKey = do
              maybeListEditor <- runDB $ getBy $ UniqueListEditor listId userId
              case maybeListEditor of
                  Nothing -> do
-                     _ <- runDB $ insert (ListEditor listId userId)
+                     _ <- runDB $ insert (ListEditor listId userId True True)
                      redirect $ ListR listId
                  _ -> redirect $ ListR listId
 
@@ -146,7 +146,7 @@ postListItemCreateR listId = do
         FormSuccess (listItemText, mCatName) -> do
             let mCatId = maybeCatNameToId (mapCatNameToId categories) mCatName
             currTime <- lift getCurrentTime
-            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing mCatId)
+            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing mCatId currTime)
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -177,9 +177,11 @@ postListItemEditR listId listItemId = do
 
     case res of 
         FormSuccess (itemName, mCatName) -> do
+            currTime <- lift getCurrentTime
             let lookupIdFromName = mapCatNameToId categories
             _ <- runDB $ update listItemId [ListItemName =. itemName,
-                                            ListItemCatId =. (maybeCatNameToId lookupIdFromName mCatName)] 
+                                            ListItemCatId =. (maybeCatNameToId lookupIdFromName mCatName),
+                                            ListItemModified =. currTime] 
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId
@@ -226,10 +228,12 @@ postListItemCompleteR listId listItemId = do
         if isNothing (listItemCompletedAt listItem)
            then do
                update listItemId [ListItemCompletedBy =. (Just uId), 
-                                  ListItemCompletedAt =. (Just currTime)] 
+                                  ListItemCompletedAt =. (Just currTime), 
+                                  ListItemModified =. currTime] 
            else do
-               update listItemId [ListItemCompletedBy =. Nothing, 
-                                  ListItemCompletedAt =. Nothing] 
+               update listItemId [ListItemCompletedBy =. Nothing,
+                                  ListItemCompletedAt =. Nothing,
+                                  ListItemModified =. currTime] 
 
     redirect $ ListR listId
 
@@ -259,7 +263,7 @@ listItemCreateForm extra mADomId entryName catName = do
     (itemRes, itemView) <- do
                                 let label = (fieldSettingsLabel MsgListItemCreateLabel) {fsId = mADomId}
                                 mreq textField label (Just entryName)
-    (catRes, _) <- mopt hiddenField "" (Just catName)
+    (catRes, catView) <- mopt hiddenField "" (Just catName)
 
     let result = (,) <$> itemRes <*> catRes
     let widget = do
@@ -268,7 +272,7 @@ listItemCreateForm extra mADomId entryName catName = do
                     ##{fvId itemView} { width: 8em; }
               |]
         [whamlet|
-                    #{extra}^{fvInput itemView}
+                    #{extra}^{fvInput itemView}^{fvInput catView}
         |]
 
     return (result, widget)
@@ -305,6 +309,8 @@ postCreateListR = do
             listId <- runDB $ insert (list {listCreatedBy = uId})
             _ <- runDB $ insert (ListEditor { listEditorList = listId
                                             , listEditorViewer = uId
+                                            , listEditorShowCategories = True
+                                            , listEditorShowCompletedAfter = True
                                             })
             randKey <- lift $ getStdRandom (randomR (100000, 1999999999 :: Int))
             _ <- runDB $ insert $ ListViewer listId uId randKey
@@ -350,7 +356,7 @@ postListItemCreateKnownCatR listId = do
         FormSuccess (listItemText, mCatName) -> do
             let mCatId = maybeCatNameToId (mapCatNameToId categories) mCatName
             currTime <- lift getCurrentTime
-            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing mCatId)
+            _ <- runDB $ insert (ListItem listItemText listId uId currTime Nothing Nothing mCatId currTime)
             redirect $ ListR listId
         _ -> do 
             list <- runDB $ get404 listId

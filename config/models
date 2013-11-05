@@ -15,6 +15,8 @@ Category
 ListEditor 
     list ListId
     viewer UserId
+    showCategories Bool
+    showCompletedAfter Bool
     UniqueListEditor list viewer
 
 ListViewer
@@ -30,6 +32,7 @@ ListItem
     completedBy UserId Maybe
     completedAt UTCTime Maybe
     catId CategoryId Maybe
+    modified UTCTime
 
 
  -- This file is used in Model.hs (which is imported by Foundation.hs)
